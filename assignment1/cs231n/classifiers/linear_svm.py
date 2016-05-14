@@ -106,6 +106,7 @@ def svm_loss_vectorized(W, X, y, reg):
   #############################################################################
   dW = grad #expletive! I debugged forever to realize I forgot to assign to dW (feel like PBS Arthur has something to say about this) 
   # unimpressed with my matrix munip skills.. (ex: margin shape is transpose of score)
+  dW += 2*.5*reg*W #always add reg penalty to your gradient kids!
   #############################################################################
   #                             END OF YOUR CODE                              #
   #############################################################################

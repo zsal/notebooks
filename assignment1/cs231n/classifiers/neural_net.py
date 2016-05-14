@@ -101,7 +101,7 @@ class TwoLayerNet(object):
     
     # Compute the loss
     softmax = lambda x: (np.exp(x).T/np.sum(np.exp(x), axis=1)).T #softmax, denom: sum across C
-    softmax_all = softmax(scores)
+    softmax_all = softmax(scores-scores.max())
     softmax_correct = softmax_all[range(N), y]
     cross_entropy_loss = -np.sum(1*np.log(softmax_correct))
     loss = cross_entropy_loss/N
