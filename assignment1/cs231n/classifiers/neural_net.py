@@ -102,6 +102,7 @@ class TwoLayerNet(object):
     # Compute the loss
     softmax = lambda x: (np.exp(x).T/np.sum(np.exp(x), axis=1)).T #softmax, denom: sum across C
     softmax_all = softmax(scores-scores.max())
+    #print softmax_all
     softmax_correct = softmax_all[range(N), y]
     cross_entropy_loss = -np.sum(1*np.log(softmax_correct))
     loss = cross_entropy_loss/N
@@ -139,8 +140,9 @@ class TwoLayerNet(object):
     grads['W2'] = np.dot(h1.T,ddot2p) #N,H * N,C = H,C
     
     #todo: bias is wrong according to numerical grad. will fix hack later.
-    grads['b1'] = ddot1p.sum(axis=0)  #H,
-    grads['b2'] = ddot2p.sum(axis=0)  #C,
+    #temp fix?
+    grads['b1'] = 0*ddot1p.sum(axis=0)  #H,
+    grads['b2'] = 0*ddot2p.sum(axis=0)  #C,
     
     grads['W1'] += 2*.5*reg*W1
     grads['W2'] += 2*.5*reg*W2
