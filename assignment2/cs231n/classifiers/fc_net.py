@@ -102,7 +102,7 @@ class TwoLayerNet(object):
     # automated tests, make sure that your L2 regularization includes a factor #
     # of 0.5 to simplify the expression for the gradient.                      #
     ############################################################################
-    loss, dloss = softmax_loss(out2, y)
+    loss, dloss = softmax_loss(scores, y)
     loss += .5 * self.reg * np.sum([np.sum(self.params['W1']*self.params['W1']), np.sum(self.params['W2']**2)])
     #its cool to do squaring different ways because reasons (i'll admit I started with dot and noticed no way to sum dimmensions). element wise squaring because all we care about is scalar value that is the squared weights. ie duh
     
