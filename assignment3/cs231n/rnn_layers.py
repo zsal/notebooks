@@ -105,7 +105,15 @@ def rnn_forward(x, h0, Wx, Wh, b):
   # input data. You should use the rnn_step_forward function that you defined  #
   # above.                                                                     #
   ##############################################################################
-  pass
+  N,T,D = x.shape
+  h_t = [h0] + [0]*(T)
+  cache = [np.zeros(1)]*T
+
+  for t in xrange(T):
+    h_t[t+1],cache[t] = rnn_step_forward(x[:,t,:], h_t[t], Wx, Wh, b)
+  
+  h = np.dstack(h_t[1:]).transpose(0,2,1)
+  #import pdb; pdb.set_trace()
   ##############################################################################
   #                               END OF YOUR CODE                             #
   ##############################################################################
@@ -132,7 +140,22 @@ def rnn_backward(dh, cache):
   # sequence of data. You should use the rnn_step_backward function that you   #
   # defined above.                                                             #
   ##############################################################################
-  pass
+  N,T,H = dh.shape
+  dx = range(T)
+  dWx = range(T)
+  dWh = range(T)
+  db = range(T)
+  dprev_h = np.zeros(shape=(N,H))
+
+  for t in reversed(xrange(T)):
+    dx[t], dprev_h, dWx[t], dWh[t], db[t] = rnn_step_backward(dh[:,t,:] + dprev_h, cache[t])
+  
+  dx = np.dstack(dx).transpose(0,2,1)
+  db  = sum(db)
+  dWx = sum(dWx)
+  dWh = sum(dWh)
+  dh0 = dprev_h
+
   ##############################################################################
   #                               END OF YOUR CODE                             #
   ##############################################################################
