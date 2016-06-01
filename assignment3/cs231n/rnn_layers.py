@@ -32,7 +32,9 @@ def rnn_step_forward(x, prev_h, Wx, Wh, b):
   # hidden state and any values you need for the backward pass in the next_h   #
   # and cache variables respectively.                                          #
   ##############################################################################
-  pass
+  a_t = x.dot(Wx) + prev_h.dot(Wh) + b
+  next_h = np.tanh(a_t)
+  cache = x, prev_h, Wx, Wh, b
   ##############################################################################
   #                               END OF YOUR CODE                             #
   ##############################################################################
@@ -61,7 +63,18 @@ def rnn_step_backward(dnext_h, cache):
   # HINT: For the tanh function, you can compute the local derivative in terms #
   # of the output value from tanh.                                             #
   ##############################################################################
-  pass
+  
+  x, prev_h, Wx, Wh, b = cache
+  a_t = x.dot(Wx) + prev_h.dot(Wh) + b
+    
+  da_t = (1 - np.tanh(a_t)**2) * dnext_h
+
+  dx = da_t.dot(Wx.T)
+  dprev_h = Wh.dot(da_t.T).T
+  dWx = x.T.dot(da_t)
+  dWh = prev_h.T.dot(da_t) # humblebrag: got right before trial-error, dimension fitting is so brute`
+  db = da_t.sum(axis=0)
+  
   ##############################################################################
   #                               END OF YOUR CODE                             #
   ##############################################################################
