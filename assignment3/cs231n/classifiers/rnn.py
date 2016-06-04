@@ -135,7 +135,23 @@ class CaptioningRNN(object):
     # defined above to store loss and gradients; grads[k] should give the      #
     # gradients for self.params[k].                                            #
     ############################################################################
-    pass
+    
+    #forward
+    h0, cache1 = affine_forward(features, W_proj, b_proj)
+    x, cache2 = word_embedding_forward(captions_in, W_embed)
+    if self.cell_type == 'rnn':
+        h, cache3 = rnn_forward(x, h0, Wx, Wh, b)
+    elif self.cell_type == 'lstm':
+        pass
+    out, cache4 = temporal_affine_forward(h, W_vocab, b_vocab)
+    loss, dout = temporal_softmax_loss(out, captions_out, mask)
+    
+    #backward
+    dh, grads['W_vocab'], grads['b_vocab'] = temporal_affine_backward(dout, cache4)
+    dx, dh0, grads['Wx'], grads['Wh'], grads['b'] = rnn_backward(dh, cache3)
+    grads['W_embed'] = word_embedding_backward(dx, cache2)
+    dfeatures, grads['W_proj'], grads['b_proj'] = affine_backward(dh0, cache1)
+    
     ############################################################################
     #                             END OF YOUR CODE                             #
     ############################################################################
@@ -197,7 +213,17 @@ class CaptioningRNN(object):
     # functions; you'll need to call rnn_step_forward or lstm_step_forward in #
     # a loop.                                                                 #
     ###########################################################################
-    pass
+    h, _ = affine_forward(features, W_proj, b_proj)
+    captions[:,0] = np.ones((N),dtype=np.int32) * self._start
+    for m in xrange(max_length-1):
+        if self.cell_type == 'rnn':
+            word_in, _ = word_embedding_forward(captions[:,m],W_embed)
+            h, _ = rnn_step_forward(word_in, h, Wx, Wh, b)
+            out, _ = temporal_affine_forward(h.reshape(N,1,-1), W_vocab, b_vocab)
+            #import pdb; pdb.set_trace()
+            captions[:,m+1] = out.argmax(axis=2).reshape(N)
+        elif self.cell_type == 'lstm':
+            pass
     ############################################################################
     #                             END OF YOUR CODE                             #
     ############################################################################

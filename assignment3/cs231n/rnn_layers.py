@@ -113,7 +113,6 @@ def rnn_forward(x, h0, Wx, Wh, b):
     h_t[t+1],cache[t] = rnn_step_forward(x[:,t,:], h_t[t], Wx, Wh, b)
   
   h = np.dstack(h_t[1:]).transpose(0,2,1)
-  #import pdb; pdb.set_trace()
   ##############################################################################
   #                               END OF YOUR CODE                             #
   ##############################################################################
@@ -183,7 +182,8 @@ def word_embedding_forward(x, W):
   #                                                                            #
   # HINT: This should be very simple.                                          #
   ##############################################################################
-  pass
+  cache = x, W
+  out = W[x,:]
   ##############################################################################
   #                               END OF YOUR CODE                             #
   ##############################################################################
@@ -211,7 +211,10 @@ def word_embedding_backward(dout, cache):
   #                                                                            #
   # HINT: Look up the function np.add.at                                       #
   ##############################################################################
-  pass
+  x,W = cache
+  dW = np.zeros(W.shape)
+  #Verbose: simple add gate - only backprop to W values used in forward pass (local gradient = 1)
+  np.add.at(dW, x, 1*dout) 
   ##############################################################################
   #                               END OF YOUR CODE                             #
   ##############################################################################
