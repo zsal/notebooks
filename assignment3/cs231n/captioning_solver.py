@@ -2,7 +2,8 @@ import numpy as np
 
 from cs231n import optim
 from cs231n.coco_utils import sample_coco_minibatch
-
+import matplotlib.pyplot as plt
+from IPython import display
 
 class CaptioningSolver(object):
   """
@@ -200,7 +201,7 @@ class CaptioningSolver(object):
     return acc
 
 
-  def train(self):
+  def train(self, plot=False):
     """
     Run optimization to train the model.
     """
@@ -215,6 +216,14 @@ class CaptioningSolver(object):
       if self.verbose and t % self.print_every == 0:
         print '(Iteration %d / %d) loss: %f' % (
                t + 1, num_iterations, self.loss_history[-1])
+        if plot:
+            # Plot the training losses
+            plt.plot(self.loss_history)
+            plt.xlabel('Iteration')
+            plt.ylabel('Loss')
+            plt.title('Training loss history')
+            display.clear_output(wait=True)
+            display.display(plt.gcf())
 
       # At the end of every epoch, increment the epoch counter and decay the
       # learning rate.
